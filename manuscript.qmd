@@ -1,0 +1,11 @@
+---
+title: "manuscript"
+format: html
+---
+
+**This is where I will have my manuscript draft for my thesis**
+
+```{r}
+iris
+```
+

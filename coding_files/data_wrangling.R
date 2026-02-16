@@ -5,10 +5,11 @@ install.packages("readxl")
 install.packages("writexl")
 library(readxl)
 library(writexl)
+library(tidyr)
 
 # import using reading from relative path
 congo_df_raw <- read_excel("coding_files/raw_data/full_DRC_data.xlsx")
-#### CLEANING ####
+#### PREPARE BASIC FRAME STRUCTURE ####
 
 ## pare down to what we need
 # check current variable names (e.g., column names)
@@ -24,78 +25,6 @@ unique(congo_df_raw$Concern...32)
 unique(congo_df_raw$`Recognition(Word)...58`)
 
 # create new data frame using only variables we want
-congo_df <- cong_df_raw %>% 
-  select(-`Part I. Dicator, Distributive justice game, and Empathy scenarios`, 
-         -`Dictator Game:\n\nAltruism`,
-         -`Distributive Justice Game:\n\nFairness`,
-         -`Empathy task`,
-         -`Story 1`,
-         -`Story 2`,
-         -`Story 3`,
-         -`Story 4`,
-         -`Story 5`,
-         -`Story 6`,
-         -`Story 7`,
-         -`Story 8`,
-         -`Story 9`,
-         -`Story 10`,
-         -`PART 2. EXPOSURE TO VIOLENCE: THINGS I SAW AND HEARD`,
-         -`I'm going to ask you some questions about things you've seen and heard in your community. You may have heard or seen some of these, and if so, I'd like you to tell me how many times you've seen or heard them.`,
-         -`You can point using this image, or you can simply tell me. The investigator shows the scale and explains it to the child. / Unaweza kunioneshe kwa kutumia picha hii, au unaweza kuniambia tu.. Mtafiti anaonyesha kiwango na kumweleza mtoto`,                                                                                                                                                                                                       
-         -`If you have never seen or heard it, you will point to the empty circle. If you have seen or heard it several times – more than four times – you will point to the last set of circles because there are many!`                                                                                                                                                                                                                                       
-         -`Let's practice. Have you ever seen a purple monkey? This is something the child should never have seen, so they should point to the empty circle or say \"No\" or \"0 times.\" Have you seen people walking outside? (This is something the child should have seen several times—4 or more—so they should say \"Yes.\") If the child says \"Yes,\" ask, \"How many times?\" (They should point to the last set of circles or say \"Several times.\")`,
-         -`Once the child has answered the above questions correctly, the investigator should ask each of the following questions and show the circles above to the child for each set of questions.`,
-         -`PART 3. CHILDHOOD DEPRESSION INVENTORY`,                                                                                                                                                                                                                                                                                                                                                                                                              
-         -`READ ALOUD`,                                                                                                                                                                                                                                                                                                                                                                                                                                          
-         -`During the last two weeks`,                                                                                                                                                                                                                                                                                                                                                                                                                           
-         -`GP2. DURING THE LAST 2 WEEKS/IN THE PERIOD OF THE LAST TWO WEEKS`,                                                                                                                                                                                                                                                                                                                                                                                    
-         -`GP3.During the last two weeks`,                                                                                                                                                                                                                                                                                                                                                                                                                       
-         [92] "GP4.During the last two weeks"                                                                                                                                                                                                                                                                                                                                                                                                                       
-         [93] "GP5.During the last two weeks"                                                                                                                                                                                                                                                                                                                                                                                                                       
-         [94] "GP6.During the last two weeks"                                                                                                                                                                                                                                                                                                                                                                                                                       
-         [95] "GP7.During the last two weeks"                                                                                                                                                                                                                                                                                                                                                                                                                       
-         [96] "GP8.During the last two weeks"                                                                                                                                                                                                                                                                                                                                                                                                                       
-         [97] "GP9.During the last two weeks"                                                                                                                                                                                                                                                                                                                                                                                                                       
-         [98] "GP10. During the last two weeks"                                                                                                                                                                                                                                                                                                                                                                                                                     
-         [99] "Identifers"                                                                                                                                                                                                                                                                                                                                                                                                                                          
-         [100] "PART 4. COGNITIVE, EMOTIONAL, AND BEHAVIORAL PROBLEMS: PEDIATRIC SYMPTOM CHECKLIST"                                                                                                                                                                                                                                                                                                                                                                  
-         [101] "1.Complains of aches and pains"                                                                                                                                                                                                                                                                                                                                                                                                                      
-         [102] "2.Spends more time alone"                                                                                                                                                                                                                                                                                                                                                                                                                            
-         [103] "3. Tires easily, has little energy"                                                                                                                                                                                                                                                                                                                                                                                                                  
-         [104] "4. Restless, unable to sit still"                                                                                                                                                                                                                                                                                                                                                                                                                    
-         [105] "5. Has problems with the teacher"                                                                                                                                                                                                                                                                                                                                                                                                                    
-         [106] "6. Less interested in school"                                                                                                                                                                                                                                                                                                                                                                                                                        
-         [107] "7. Acts as if it were driven by a motor"                                                                                                                                                                                                                                                                                                                                                                                                             
-         [108] "8. Daydreams too much"                                                                                                                                                                                                                                                                                                                                                                                                                               
-         [109] "9. Easily distracted"                                                                                                                                                                                                                                                                                                                                                                                                                                
-         [110] "10. Fears new situations"                                                                                                                                                                                                                                                                                                                                                                                                                            
-         [111] "11. Feels sad, unhappy"                                                                                                                                                                                                                                                                                                                                                                                                                              
-         [112] "12. Is irritable, angry"                                                                                                                                                                                                                                                                                                                                                                                                                             
-         [113] "13. Feels hopeless"                                                                                                                                                                                                                                                                                                                                                                                                                                  
-         [114] "14.A. Difficulty concentrating"                                                                                                                                                                                                                                                                                                                                                                                                                      
-         [115] "15. Less interested in friends"                                                                                                                                                                                                                                                                                                                                                                                                                      
-         [116] "16. Fights with other children"                                                                                                                                                                                                                                                                                                                                                                                                                      
-         [117] "17. Absent from school"                                                                                                                                                                                                                                                                                                                                                                                                                              
-         [118] "18. Decline in school grades"                                                                                                                                                                                                                                                                                                                                                                                                                        
-         [119] "19. Withdraws into himself"                                                                                                                                                                                                                                                                                                                                                                                                                          
-         [120] "20. Visit the doctor and the doctor finds nothing wrong"                                                                                                                                                                                                                                                                                                                                                                                             
-         [121] "21. Has difficulty sleeping"                                                                                                                                                                                                                                                                                                                                                                                                                         
-         [122] "22. Worries a lot"                                                                                                                                                                                                                                                                                                                                                                                                                                   
-         [123] "23. Wants to be with you more than before"                                                                                                                                                                                                                                                                                                                                                                                                           
-         [124] "24. Feels that he or she is bad"                                                                                                                                                                                                                                                                                                                                                                                                                     
-         [125] "25. Takes unnecessary risks"                                                                                                                                                                                                                                                                                                                                                                                                                         
-         [126] "26. Frequently injures himself"                                                                                                                                                                                                                                                                                                                                                                                                                      
-         [127] "27. Seems to be having less fun"                                                                                                                                                                                                                                                                                                                                                                                                                     
-         [128] "28. Acts younger than children his age"                                                                                                                                                                                                                                                                                                                                                                                                              
-         [129] "29. Doesn't listen to the rules"                                                                                                                                                                                                                                                                                                                                                                                                                     
-         [130] "30. Does not show feelings"                                                                                                                                                                                                                                                                                                                                                                                                                          
-         [131] "31. Doesn't understand other people's feelings"                                                                                                                                                                                                                                                                                                                                                                                                      
-         [132] "32. Tease others"                                                                                                                                                                                                                                                                                                                                                                                                                                    
-         [133] "33. Blames others for his problems"                                                                                                                                                                                                                                                                                                                                                                                                                  
-         [134] "34. Takes things that do not belong to him"                                                                                                                                                                                                                                                                                                                                                                                                          
-         [135] "35. Refuses to share"                                                                                                                                                                                                                                                                                                                                                                                                                                
-         [136] "Does this child have emotional or behavioral problems for which they need help?"  )
-
 library(dplyr)
 congo_df <- congo_df_raw %>% 
   select(-`Part I. Dicator, Distributive justice game, and Empathy scenarios`, 
@@ -119,3 +48,50 @@ congo_df <- congo_df_raw %>%
   )
 
 colnames(congo_df)
+
+#### CREATE VARIABLES ####
+
+## VIOLENCE ##
+# create individual variables
+heard_gunshots <- congo_df$`1.Have you ever heard gunshots?`
+heard_gunshots_freq <- congo_df$`How many times?...68`
+
+seen_beatup <- congo_df$`2. Have you ever seen someone get beaten up?`
+seen_beatup_freq <- congo_df$`How many times?...70`
+
+seen_stabbed <- congo_df$`3. Have you ever seen someone get stabbed?`
+seen_stabbed_freq <- congo_df$`How many times?...72`
+
+seen_shot <- congo_df$`4. Have you ever seen someone get shot?`
+seen_shot_freq <- congo_df$`How many times?...74`
+
+firearm_home <- congo_df$`5. Have you ever seen a firearm in your own home?`
+firearm_home_freq <- congo_df$`How many times?...76`
+
+attend_school <- congo_df$`6. Do you go to school?`
+unsafe_school_freq <- congo_df$`How many times have your felt unsafe at school?`
+
+unsafe_neighborhood <- congo_df$`7. Do you feel unsafe outside in your neighborhood?`
+unsafe_neighborhood_freq <- congo_df$`How often did you feel unsafe in your neighborhood?`
+
+seen_body <- congo_df$`8. Have you ever seen a dead body in your neighborhood?`
+seen_body_freq <- congo_df$`How many times?...82`
+
+gangs <- congo_df$`9. Have you ever seen gangs in your neighborhood?`
+gangs_freq <- congo_df$`How many times?...84`
+
+seen_fired_firearm <- congo_df$`10. Have you ever seen a gun fired at someone?`
+seen_fired_firearm_freq <- congo_df$`How many times?...86`
+
+# combine variables
+vi_type <- c(heard_gunshots, seen_beatup, seen_stabbed, seen_shot, firearm_home,
+             unsafe_neighborhood, seen_body, gangs, seen_fired_firearm) ## should I include attend_school?
+
+vi_freq <- c(heard_gunshots_freq, seen_beatup_freq, seen_stabbed_freq, seen_shot_freq,
+             firearm_home_freq, unsafe_school_freq, unsafe_neighborhood_freq, seen_body_freq, 
+             gangs_freq, seen_fired_firearm_freq)
+
+# drop NAs
+drop_na(vi_type)
+drop_na(vi_freq)
+

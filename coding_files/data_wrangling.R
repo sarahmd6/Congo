@@ -86,12 +86,22 @@ seen_fired_firearm_freq <- congo_df$`How many times?...86`
 # combine variables
 vi_type <- c(heard_gunshots, seen_beatup, seen_stabbed, seen_shot, firearm_home,
              unsafe_neighborhood, seen_body, gangs, seen_fired_firearm) ## should I include attend_school?
+unique(vi_type)
 
 vi_freq <- c(heard_gunshots_freq, seen_beatup_freq, seen_stabbed_freq, seen_shot_freq,
              firearm_home_freq, unsafe_school_freq, unsafe_neighborhood_freq, seen_body_freq, 
              gangs_freq, seen_fired_firearm_freq)
 
+# turn strings into numbers
+replace(vi_type, vi_type == "No", 0)
+replace(vi_type, vi_type == "No /Hapana", 0)
+
+replace(vi_type, vi_type == "Yes", 1)
+replace(vi_type, vi_type == "Yes/ Ndiyo", 1) # should I lump "Sometimes" in with "yes"?
+replace(vi_type, vi_type == "Sometimes/ Mara kwa mara", 1)
+
 # drop NAs
 drop_na(vi_type)
+unique(vi_type)
 drop_na(vi_freq)
 

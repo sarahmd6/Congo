@@ -3,9 +3,31 @@ title: "manuscript"
 format: html
 ---
 
-**This is where I will have my manuscript draft for my thesis**
+# Introduction
+## Literature Review
+
+## Current Study
+[explain research problem]
+[specific research questions (2 simple)]
+[hypotheses]
+
+
+# Method
+[description of data]
+[short description of how I manipulated data- cleaning, exclusions]
+[simple description of participants- simple analysis (mean), & viz]
+[explain what it means]
+
+# Results
+[answer simple research question- descriptive/predictive]
+[visualizations]
+
+# Discussion
+[discuss results]
+
+
 
 ```{r}
-iris
+
 ```
 

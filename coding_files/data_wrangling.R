@@ -95,6 +95,13 @@ vi_freq <- c(heard_gunshots_freq, seen_beatup_freq, seen_stabbed_freq, seen_shot
              firearm_home_freq, unsafe_school_freq, unsafe_neighborhood_freq, seen_body_freq, 
              gangs_freq, seen_fired_firearm_freq)
 
+df_numbers <- vi_type %>%
+  mutate(vitype_numeric = recode(category,
+                                   "once" = 1,
+                                   "twice" = 2,
+                                   "three times" = 3,
+                                   "four or more times" = 4))
+
 # turn strings into numbers
 vi_type <- replace(vi_type, vi_type == "No", 0)
 vi_type <- replace(vi_type, vi_type == "No /Hapana", 0)
@@ -111,3 +118,5 @@ unique(vi_type)
 drop_na(vi_freq)
 
 ?mutate
+?summarize
+?drop_na

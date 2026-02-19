@@ -1,25 +1,44 @@
 ---
-title: "manuscript"
+title: "Effect of Violence Exposure on Children’s Moral Behavior"
+author: Sarah Denton
+date: March 13, 2026
+theme: journal
 format: html
 ---
 
+```{r}
+#| label: setup
+#| echo: false
+#| warning: false
+
+# hidden set up code chunk(s)- libraries, default chunk options, set seed, source other scripts - see knitr documentation, gear icon
+library(tidyverse)
+```
+
+
 # Introduction
+
 ## Literature Review
+[set up context to understand the study]
 
 ## Current Study
+
 [explain research problem]
-[specific research questions (2 simple)]
+[specific research questions (~2 simple)]
 [hypotheses]
 
 
 # Method
-[description of data]
+[description of data, as subset]  
+[participants - numbers, means]
 [short description of how I manipulated data- cleaning, exclusions]
-[simple description of participants- simple analysis (mean), & viz]
-[explain what it means]
+
+<!-- [simple description of participants- simple analysis (mean), & viz] -->
+[explain what it means- plots, tests, data manipulation]
 
 # Results
 [answer simple research question- descriptive/predictive]
+single output per code chunk, few lines (<10 lines)
 [visualizations]
 
 # Discussion

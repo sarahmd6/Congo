@@ -49,6 +49,9 @@ congo_df <- congo_df_raw %>%
 
 colnames(congo_df)
 
+congo_df <- congo_df |> drop_na()
+unique(congo_df)
+
 #### CREATE VARIABLES ####
 
 ## VIOLENCE ##
@@ -93,15 +96,18 @@ vi_freq <- c(heard_gunshots_freq, seen_beatup_freq, seen_stabbed_freq, seen_shot
              gangs_freq, seen_fired_firearm_freq)
 
 # turn strings into numbers
-replace(vi_type, vi_type == "No", 0)
-replace(vi_type, vi_type == "No /Hapana", 0)
+vi_type <- replace(vi_type, vi_type == "No", 0)
+vi_type <- replace(vi_type, vi_type == "No /Hapana", 0)
 
-replace(vi_type, vi_type == "Yes", 1)
-replace(vi_type, vi_type == "Yes/ Ndiyo", 1) # should I lump "Sometimes" in with "yes"?
-replace(vi_type, vi_type == "Sometimes/ Mara kwa mara", 1)
+vi_type <- replace(vi_type, vi_type == "Yes", 1)
+vi_type <- replace(vi_type, vi_type == "Yes/ Ndiyo", 1) # should I lump "Sometimes" in with "yes"?
+vi_type <- replace(vi_type, vi_type == "Sometimes/ Mara kwa mara", 1)
+
+unique(vi_type)
 
 # drop NAs
 drop_na(vi_type)
 unique(vi_type)
 drop_na(vi_freq)
 
+?mutate

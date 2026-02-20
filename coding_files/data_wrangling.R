@@ -51,7 +51,7 @@ colnames(congo_df)
 
 #### CREATE VARIABLES ####
 
-## VIOLENCE ##
+## VIOLENCE ####
 # change column names
 congo_df1 <- rename(congo_df,
                     heard_gunshots = `1.Have you ever heard gunshots?`,
@@ -198,3 +198,19 @@ congo_df3 <- congo_df3 %>%
       seen_body_freq, seen_gangs_freq, seen_fired_firearm_freq)
   )))
 
+
+
+## EMOTION RECOGNITION ####
+colnames(congo_df3)
+
+# code positive/negative on Recognition Valence for S1 - S10
+unique(congo_df3$`S1 Recognition (Valence)`)
+unique(congo_df3$`S2 Recognition (Valence)`)
+unique(congo_df3$`Recognition (Valence)...31`)
+unique(congo_df3$`Recognition (Valence)...35`)
+unique(congo_df3$`Recognition (Valence)...39`) # includes NA
+unique(congo_df3$`Recognition (Valence)...43`)
+unique(congo_df3$`Recognition (Valence)...47`)
+unique(congo_df3$`Recognition (Valence)...51`)
+unique(congo_df3$`Recognition (Valence)...55`)
+unique(congo_df3$`Recognition (Valence)...59`)

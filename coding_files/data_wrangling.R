@@ -49,74 +49,74 @@ congo_df <- congo_df_raw %>%
 
 colnames(congo_df)
 
-congo_df <- congo_df |> drop_na()
-unique(congo_df)
-
 #### CREATE VARIABLES ####
 
 ## VIOLENCE ##
-# create individual variables
-heard_gunshots <- congo_df$`1.Have you ever heard gunshots?`
-heard_gunshots_freq <- congo_df$`How many times?...68`
+# change column names
+congo_df1 <- rename(congo_df,
+                    heard_gunshots = `1.Have you ever heard gunshots?`,
+                    heard_gunshots_freq = `How many times?...68`,
+                    
+                    seen_beatup = `2. Have you ever seen someone get beaten up?`,
+                    seen_beatup_freq = `How many times?...70`,
+                    
+                    seen_stabbed = `3. Have you ever seen someone get stabbed?`,
+                    seen_stabbed_freq = `How many times?...72`,
+                    
+                    seen_shot = `4. Have you ever seen someone get shot?`,
+                    seen_shot_freq = `How many times?...74`,
+                    
+                    firearm_home = `5. Have you ever seen a firearm in your own home?`,
+                    firearm_home_freq = `How many times?...76`,
+                    
+                    attend_school = `6. Do you go to school?`,
+                    unsafe_school_freq = `How many times have your felt unsafe at school?`,
+                    
+                    unsafe_neighborhood = `7. Do you feel unsafe outside in your neighborhood?`,
+                    unsafe_neighborhood_freq = `How often did you feel unsafe in your neighborhood?`,
+                    
+                    seen_body = `8. Have you ever seen a dead body in your neighborhood?`,
+                    seen_body_freq = `How many times?...82`,
+                    
+                    seen_gangs = `9. Have you ever seen gangs in your neighborhood?`,
+                    seen_gangs_freq = `How many times?...84`,
+                    
+                    seen_fired_firearm = `10. Have you ever seen a gun fired at someone?`,
+                    seen_fired_firearm_freq = `How many times?...86`
+                    )
 
-seen_beatup <- congo_df$`2. Have you ever seen someone get beaten up?`
-seen_beatup_freq <- congo_df$`How many times?...70`
+colnames(congo_df1) # check
 
-seen_stabbed <- congo_df$`3. Have you ever seen someone get stabbed?`
-seen_stabbed_freq <- congo_df$`How many times?...72`
+congo_df2 <- congo_df1 %>%
+  mutate(across(
+    c(heard_gunshots, seen_beatup, seen_stabbed, seen_shot, firearm_home, 
+                  attend_school, unsafe_neighborhood, seen_body, gangs, seen_fired_firearm),
+                ~ dplyr::recode(.,
+                        "Yes" = 1, 
+                        "Yes/ Ndiyo" = 1,
+                        "Sometimes/ Mara kwa mara" = 1,
+                        "No" = 0,
+                        "No /Hapana" = 0)
+    ))
 
-seen_shot <- congo_df$`4. Have you ever seen someone get shot?`
-seen_shot_freq <- congo_df$`How many times?...74`
+congo_df2 <- congo_df1 %>%
+  
+  dplyr::mutate(dplyr::across(
+    
+    c(heard_gunshots, seen_beatup, seen_stabbed, seen_shot, firearm_home,
+      
+      attend_school, unsafe_neighborhood, seen_body, gangs, seen_fired_firearm),
+    
+    ~ dplyr::case_when(
+      
+      . %in% c("Yes", "Yes/ Ndiyo", "Sometimes/ Mara kwa mara") ~ 1,
+      
+      . %in% c("No", "No /Hapana") ~ 0,
+      
+      TRUE ~ NA_real_
+      
+    )
+    
+  ))
 
-firearm_home <- congo_df$`5. Have you ever seen a firearm in your own home?`
-firearm_home_freq <- congo_df$`How many times?...76`
-
-attend_school <- congo_df$`6. Do you go to school?`
-unsafe_school_freq <- congo_df$`How many times have your felt unsafe at school?`
-
-unsafe_neighborhood <- congo_df$`7. Do you feel unsafe outside in your neighborhood?`
-unsafe_neighborhood_freq <- congo_df$`How often did you feel unsafe in your neighborhood?`
-
-seen_body <- congo_df$`8. Have you ever seen a dead body in your neighborhood?`
-seen_body_freq <- congo_df$`How many times?...82`
-
-gangs <- congo_df$`9. Have you ever seen gangs in your neighborhood?`
-gangs_freq <- congo_df$`How many times?...84`
-
-seen_fired_firearm <- congo_df$`10. Have you ever seen a gun fired at someone?`
-seen_fired_firearm_freq <- congo_df$`How many times?...86`
-
-# combine variables
-vi_type <- c(heard_gunshots, seen_beatup, seen_stabbed, seen_shot, firearm_home,
-             unsafe_neighborhood, seen_body, gangs, seen_fired_firearm) ## should I include attend_school?
-unique(vi_type)
-
-vi_freq <- c(heard_gunshots_freq, seen_beatup_freq, seen_stabbed_freq, seen_shot_freq,
-             firearm_home_freq, unsafe_school_freq, unsafe_neighborhood_freq, seen_body_freq, 
-             gangs_freq, seen_fired_firearm_freq)
-
-df_numbers <- vi_type %>%
-  mutate(vitype_numeric = recode(category,
-                                   "once" = 1,
-                                   "twice" = 2,
-                                   "three times" = 3,
-                                   "four or more times" = 4))
-
-# turn strings into numbers
-vi_type <- replace(vi_type, vi_type == "No", 0)
-vi_type <- replace(vi_type, vi_type == "No /Hapana", 0)
-
-vi_type <- replace(vi_type, vi_type == "Yes", 1)
-vi_type <- replace(vi_type, vi_type == "Yes/ Ndiyo", 1) # should I lump "Sometimes" in with "yes"?
-vi_type <- replace(vi_type, vi_type == "Sometimes/ Mara kwa mara", 1)
-
-unique(vi_type)
-
-# drop NAs
-drop_na(vi_type)
-unique(vi_type)
-drop_na(vi_freq)
-
-?mutate
-?summarize
-?drop_na
+colnames(congo_df1)

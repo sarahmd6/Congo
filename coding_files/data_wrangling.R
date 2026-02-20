@@ -87,10 +87,12 @@ congo_df1 <- rename(congo_df,
 
 colnames(congo_df1) # check
 
+
+# VE: replace Y/N with 0/1 
 congo_df2 <- congo_df1 %>%
   mutate(across(
     c(heard_gunshots, seen_beatup, seen_stabbed, seen_shot, firearm_home, 
-                  attend_school, unsafe_neighborhood, seen_body, gangs, seen_fired_firearm),
+                  attend_school, unsafe_neighborhood, seen_body, seen_gangs, seen_fired_firearm),
                 ~ dplyr::recode(.,
                         "Yes" = 1, 
                         "Yes/ Ndiyo" = 1,
@@ -99,24 +101,100 @@ congo_df2 <- congo_df1 %>%
                         "No /Hapana" = 0)
     ))
 
-congo_df2 <- congo_df1 %>%
-  
-  dplyr::mutate(dplyr::across(
-    
-    c(heard_gunshots, seen_beatup, seen_stabbed, seen_shot, firearm_home,
-      
-      attend_school, unsafe_neighborhood, seen_body, gangs, seen_fired_firearm),
-    
-    ~ dplyr::case_when(
-      
-      . %in% c("Yes", "Yes/ Ndiyo", "Sometimes/ Mara kwa mara") ~ 1,
-      
-      . %in% c("No", "No /Hapana") ~ 0,
-      
-      TRUE ~ NA_real_
-      
-    )
-    
+congo_df2
+
+# VF: replace strings with integers
+
+congo_df2 <- congo_df2 %>%
+  mutate(across(
+    c(heard_gunshots_freq, seen_beatup_freq, seen_stabbed_freq, seen_shot_freq, firearm_home_freq, 
+      unsafe_school_freq, unsafe_neighborhood_freq, seen_body_freq, seen_gangs_freq, seen_fired_firearm_freq),
+    ~ dplyr::recode(.,
+                    "Never" = 0, 
+                    "Once" = 1,
+                    "Twice" = 2,
+                    "Three times" = 3,
+                    "Four or more times" = 4)
   ))
 
-colnames(congo_df1)
+congo_df2
+
+# drop NAs of exposure
+congo_df3 <- congo_df2 %>%
+  drop_na(heard_gunshots, seen_beatup, seen_stabbed, seen_shot, firearm_home, 
+          attend_school, unsafe_neighborhood, seen_body, seen_gangs, seen_fired_firearm)
+
+# check if there are columns where exposure = 1 and frequency is NA. CODE TAKEN FROM CHAT GPT.
+congo_df3 %>% 
+  filter(heard_gunshots == 1 & is.na(heard_gunshots_freq)) %>% 
+  nrow()
+
+congo_df3 %>% 
+  filter(seen_beatup == 1 & is.na(seen_beatup_freq)) %>% 
+  nrow() ## RETURNED 2
+
+congo_df3 %>% 
+  filter(seen_stabbed == 1 & is.na(seen_stabbed_freq)) %>% 
+  nrow()
+
+congo_df3 %>% 
+  filter(seen_shot == 1 & is.na(seen_shot_freq)) %>% 
+  nrow()
+
+congo_df3 %>% 
+  filter(firearm_home == 1 & is.na(firearm_home_freq)) %>% 
+  nrow()
+
+congo_df3 %>% 
+  filter(attend_school == 1 & is.na(unsafe_school_freq)) %>% 
+  nrow()
+
+congo_df3 %>% 
+  filter(unsafe_neighborhood == 1 & is.na(unsafe_neighborhood_freq)) %>% 
+  nrow() # RETURNED 1
+
+congo_df3 %>% 
+  filter(seen_body == 1 & is.na(seen_body_freq)) %>% 
+  nrow()
+
+congo_df3 %>% 
+  filter(seen_gangs == 1 & is.na(seen_gangs_freq)) %>% 
+  nrow()
+
+congo_df3 %>% 
+  filter(seen_fired_firearm == 1 & is.na(seen_fired_firearm_freq)) %>% 
+  nrow()
+
+# check seen_beatup & unsafe_neighborhood - CODE TAKEN FROM CHAT GPT
+congo_df3 %>% 
+  filter(seen_beatup == 1 & is.na(seen_beatup_freq)) # returns tibble: ID 603 & 613 are problematic
+
+congo_df3 %>% 
+  filter(unsafe_neighborhood == 1 & is.na(unsafe_neighborhood_freq)) # ID 404
+
+# drop those rows (problematic data)
+congo_df3 <- congo_df3 %>% 
+  filter(!(ID == 404))
+
+congo_df3 <- congo_df3 %>% 
+  filter(!(ID == 603))
+
+congo_df3 <- congo_df3 %>% 
+  filter(!(ID == 613))
+
+# turn remaining NAs in Frequency into 0s (that should mean they never saw it, right?)
+congo_df3 <- congo_df3 %>%
+  mutate(across(
+    c(heard_gunshots_freq, seen_beatup_freq, seen_stabbed_freq, seen_shot_freq, firearm_home_freq, 
+      unsafe_school_freq, unsafe_neighborhood_freq, seen_body_freq, seen_gangs_freq, seen_fired_firearm_freq),
+    ~replace_na(., 0)
+  ))
+  
+# create average frequency per participant
+congo_df3 <- congo_df3 %>%
+  mutate(vifreq_mean = rowMeans(across(
+    c(heard_gunshots_freq, seen_beatup_freq, seen_stabbed_freq, seen_shot_freq, 
+      firearm_home_freq, unsafe_school_freq, unsafe_neighborhood_freq, 
+      seen_body_freq, seen_gangs_freq, seen_fired_firearm_freq)
+  )))
+

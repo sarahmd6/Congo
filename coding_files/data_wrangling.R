@@ -203,14 +203,67 @@ congo_df3 <- congo_df3 %>%
 ## EMOTION RECOGNITION ####
 colnames(congo_df3)
 
-# code positive/negative on Recognition Valence for S1 - S10
-unique(congo_df3$`S1 Recognition (Valence)`)
-unique(congo_df3$`S2 Recognition (Valence)`)
-unique(congo_df3$`Recognition (Valence)...31`)
-unique(congo_df3$`Recognition (Valence)...35`)
-unique(congo_df3$`Recognition (Valence)...39`) # includes NA
-unique(congo_df3$`Recognition (Valence)...43`)
-unique(congo_df3$`Recognition (Valence)...47`)
-unique(congo_df3$`Recognition (Valence)...51`)
-unique(congo_df3$`Recognition (Valence)...55`)
-unique(congo_df3$`Recognition (Valence)...59`)
+# rename columns
+congo_df3 <- rename(congo_df3,
+                    s1rv = `S1 Recognition (Valence)`,
+                    s2rv = `S2 Recognition (Valence)`,
+                    s3rv = `Recognition (Valence)...31`,
+                    s4rv = `Recognition (Valence)...35`,
+                    s5rv = `Recognition (Valence)...39`,
+                    s6rv = `Recognition (Valence)...43`,
+                    s7rv = `Recognition (Valence)...47`,
+                    s8rv = `Recognition (Valence)...51`,
+                    s9rv = `Recognition (Valence)...55`,
+                    s10rv = `Recognition (Valence)...59`
+                    
+)
+
+colnames(congo_df3)
+
+# check unique values
+unique(congo_df3$s1rv)
+unique(congo_df3$s2rv)
+unique(congo_df3$s3rv)
+unique(congo_df3$s4rv)
+unique(congo_df3$s5rv) # includes NA
+unique(congo_df3$s6rv)
+unique(congo_df3$s7rv)
+unique(congo_df3$s8rv)
+unique(congo_df3$s9rv)
+unique(congo_df3$s10rv)
+
+# code positive/negative on Recognition Valence for S1 - S10 as Correct/Incorrect
+### correct responses taken from answer key
+
+# where NEGATIVE = 1 (TRUE)
+congo_df3 <- congo_df3 %>%
+  mutate(across(
+    c(s1rv, s5rv, s6rv, s8rv, s9rv),
+    ~ recode(.,
+              "Negative" = 1,
+              "Négative" = 1,
+              "Positive" = 0)
+  ))
+
+# where POSITIVE = 1 (TRUE)
+congo_df3 <- congo_df3 %>%
+  mutate(across(
+    c(s2rv, s3rv, s4rv, s7rv, s10rv),
+    ~ recode(.,
+             "Negative" = 0,
+             "Négative" = 0,
+             "Positive" = 1)
+  ))
+
+# drop NA
+congo_df3 <- congo_df3 |>
+  drop_na(s5rv)
+
+# create ER score accuracy rate
+congo_df3 <- congo_df3 %>%
+  mutate(emorec_accuracy = rowMeans(across(
+    c(s1rv, s2rv, s3rv, s4rv, s5rv, s6rv, s7rv, s8rv, s9rv, s10rv)
+  )))
+
+## EMPATHIC CONCERN ####
+?group_by

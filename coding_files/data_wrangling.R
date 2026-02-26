@@ -29,18 +29,26 @@ library(dplyr)
 congo_df <- congo_df_raw %>% 
   select(-`Part I. Dicator, Distributive justice game, and Empathy scenarios`, 
          -`Dictator Game:\n\nAltruism`,
-         -`Distributive Justice Game:\n\nFairness`,
-         -`Empathy task`,
-         -`Story 1`,
+         -(`Distributive Justice Game:\n\nFairness` : 
+            `S1 Recognition(Word)`),
          -`Story 2`,
+         -`S2 Recognition(Word)...26`,
          -`Story 3`,
+         -`S2 Recognition(Word)...30`,
          -`Story 4`,
+         -`Recognition(Word)...34`,
          -`Story 5`,
+         -`Recognition(Word)...38`,
          -`Story 6`,
+         -`Recognition(Word)...42`,
          -`Story 7`,
+         -`Recognition(Word)...46`,
          -`Story 8`,
+         -`Recognition(Word)...50`,
          -`Story 9`,
+         -`Recognition(Word)...54`,
          -`Story 10`,
+         -`Recognition(Word)...58`,
          -(`PART 2. EXPOSURE TO VIOLENCE: THINGS I SAW AND HEARD`:
              `Once the child has answered the above questions correctly, the investigator should ask each of the following questions and show the circles above to the child for each set of questions.`),
          -(`PART 3. CHILDHOOD DEPRESSION INVENTORY`:
@@ -266,4 +274,27 @@ congo_df3 <- congo_df3 %>%
   )))
 
 ## EMPATHIC CONCERN ####
-?group_by
+
+# turn data set into long
+
+# create copy
+emp.con.long <- pivot_longer(
+  congo_df3,
+  cols = s1rv : `Concern...60`,
+  names_to = 
+)
+
+
+
+
+
+
+
+
+
+
+## EXTRA VARIABLES ####
+table(congo_df$`Sex/Gender`)
+table(congo_df$`Age in years`)
+colnames(congo_df)
+table(congo_df$Commune)

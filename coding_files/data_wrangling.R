@@ -213,18 +213,16 @@ colnames(congo_df3)
 
 # rename columns
 congo_df3 <- rename(congo_df3,
-                    s1rv = `S1 Recognition (Valence)`,
-                    s2rv = `S2 Recognition (Valence)`,
-                    s3rv = `Recognition (Valence)...31`,
-                    s4rv = `Recognition (Valence)...35`,
-                    s5rv = `Recognition (Valence)...39`,
-                    s6rv = `Recognition (Valence)...43`,
-                    s7rv = `Recognition (Valence)...47`,
-                    s8rv = `Recognition (Valence)...51`,
-                    s9rv = `Recognition (Valence)...55`,
-                    s10rv = `Recognition (Valence)...59`
-                    
-)
+                    s1.rv = `S1 Recognition (Valence)`,
+                    s2.rv = `S2 Recognition (Valence)`,
+                    s3.rv = `Recognition (Valence)...31`,
+                    s4.rv = `Recognition (Valence)...35`,
+                    s5.rv = `Recognition (Valence)...39`,
+                    s6.rv = `Recognition (Valence)...43`,
+                    s7.rv = `Recognition (Valence)...47`,
+                    s8.rv = `Recognition (Valence)...51`,
+                    s9.rv = `Recognition (Valence)...55`,
+                    s10.rv = `Recognition (Valence)...59`)
 
 colnames(congo_df3)
 
@@ -275,25 +273,90 @@ congo_df3 <- congo_df3 %>%
 
 ## EMPATHIC CONCERN ####
 
-# turn data set into long
+# rename Concern columns
+congo_df3 <- rename(congo_df3,
+                    s1conc = `S1 Concern`,
+                    s2conc = `Concern...28`,
+                    s3conc = `Concern...32`,
+                    s4conc = `Concern...36`,
+                    s5conc = `Concern...40`,
+                    s6conc = `Concern...44`,
+                    s7conc = `Concern...48`,
+                    s8conc = `Concern...52`,
+                    s9conc = `Concern...56`,
+                    s10conc = `Concern...60`)
 
-# create copy
+# check data type
+str(congo_df3) # s6conc is character
+
+# fix
+unique(congo_df3$s6.conc) # loose string
+
+congo_df3 <- congo_df3 %>%
+  mutate(s6.conc = recode( # this section was from ChatGPT
+    s6.conc,
+    "1 (Pas désolé du tout/ Sio pole hata kidogo )" = 1, 
+    "2.0" = 2,
+    "3.0" = 3,
+    "4.0" = 4,
+    "5.0" = 5))
+
+
+### turn data set into long
+
+# CODE FROM CHAT GPT
+###
 emp.con.long <- pivot_longer(
   congo_df3,
-  cols = s1rv : `Concern...60`,
-  names_to = 
+  cols = matches("^s\\d+"),
+  names_to = c("story", "measure"),
+  names_pattern = "s(\\d+)(.*)",
+  values_to = "value"
 )
+###
+
+# drop unnecessary columns
+emp.con.long <- emp.con.long %>% 
+  select(-(`School` : 
+             `emorec_accuracy`))
+
+# change column names for clarity
+emp.con.long <- emp.con.long %>%
+  mutate(measure = recode( # this line was from ChatGPT
+    measure,
+    "rv" = "emo_rec", 
+    ".conc" = "emp_conc"))
+
+# spread back out - code taken from Chat GPT
+###
+emp.con.long <- emp.con.long %>%
+  pivot_wider(
+    names_from = measure,
+    values_from = value
+  )
+###
+
+# filter out stories 2, 3, 4, 7, 10 (identifies positive emotions & therefore irrelevant to empathic concern)
+emp.con.long <- emp.con.long |>
+  filter(!(story == 2 | 
+           story == 3 |
+           story == 4 |
+           story == 7 |
+           story == 10))
+
+# decide which rows to use for empathic concern mean score
+for (i in emp.con.long){
+  if (emo_rec != 1) { # if they got it wrong
+    is.na(emp_conc)
+  }
+}
 
 
 
 
 
 
-
-
-
-
-## EXTRA VARIABLES ####
+]## EXTRA VARIABLES ####
 table(congo_df$`Sex/Gender`)
 table(congo_df$`Age in years`)
 colnames(congo_df)

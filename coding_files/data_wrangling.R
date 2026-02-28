@@ -338,25 +338,33 @@ emp.con.long <- emp.con.long %>%
 
 # filter out stories 2, 3, 4, 7, 10 (identifies positive emotions & therefore irrelevant to empathic concern)
 emp.con.long <- emp.con.long |>
-  filter(!(story == 2 | 
-           story == 3 |
-           story == 4 |
-           story == 7 |
-           story == 10))
+  filter(story == 1 | 
+         story == 5 |
+         story == 6 |
+         story == 8 |
+         story == 9)
 
-# decide which rows to use for empathic concern mean score
-for (i in emp.con.long){
-  if (emo_rec != 1) { # if they got it wrong
-    is.na(emp_conc)
-  }
-}
+unique(emp.con.long$emo_rec) # confirm that there are 0s and 1s
+
+# filter out responses where they were incorrect
+emp.con.long <- emp.con.long |>
+  filter(emo_rec == 1)
+
+# create empathic concern score
+# CODE FROM CHAT GPT #
+###
+emp.con_means <- emp.con.long %>%
+  group_by(ID) %>%
+  summarise(mean_emp_conc = mean(emp_conc, na.rm = TRUE))
+###
+
+# combine empathic score with original congo_df3 data frame again
 
 
 
 
 
-
-]## EXTRA VARIABLES ####
+## EXTRA VARIABLES ####
 table(congo_df$`Sex/Gender`)
 table(congo_df$`Age in years`)
 colnames(congo_df)
